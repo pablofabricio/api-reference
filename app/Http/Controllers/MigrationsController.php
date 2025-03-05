@@ -14,7 +14,7 @@ class MigrationsController extends Controller
         $requestData = $request->all();
         $requestData['migration_id'] = Str::uuid();
 
-        dispatch(new BrandJob($requestData)); 
+        dispatch(new BrandJob($requestData));
 
         return response('', Response::HTTP_NO_CONTENT);
     }

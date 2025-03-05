@@ -3,14 +3,19 @@
 namespace App\Services;
 
 use App\Helpers\Utils;
+use App\Jobs\BrandJob;
+use App\Jobs\CategoryJob;
 use App\Repositories\ResourceRepository;
 
 class BrandMigrateService extends MigrateService
 {
     public function __construct(array $request, $page) 
     {
+        $this->page = $page;
         $this->request = $request;
         $this->resource = '/brands';
+        $this->job = BrandJob::class;
+        $this->nextJob = CategoryJob::class;
         $this->resourceRepository = App(ResourceRepository::class);
     }
 

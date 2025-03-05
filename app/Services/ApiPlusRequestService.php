@@ -15,4 +15,9 @@ class ApiPlusRequestService extends RestRequestService
             ],
         ]);
     }
+
+    public function get($uri, $params = [])
+    {
+        return json_decode($this->client->get($uri, ['query' => $params])->getBody()) ?? null;
+    }
 }

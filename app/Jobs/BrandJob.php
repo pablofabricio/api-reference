@@ -37,7 +37,5 @@ class BrandJob implements ShouldQueue
         $service = new BrandMigrateService($this->request, $this->page);
         
         $service->import($this->request);
-
-       //dispatch(new CategoryJob($this->request));
     }
 }

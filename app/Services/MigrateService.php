@@ -6,20 +6,29 @@ use App\Repositories\ResourceRepository;
 
 abstract class MigrateService 
 {
+    protected int $page; 
     protected array $request; 
     protected $resource; 
-    protected $getParams = [];
     protected ResourceRepository $resourceRepository;
+    protected string $job; 
+    protected string $nextJob; 
 
     public function import()
     {
         $apiPlus = new ApiPlusRequestService($this->request['fromToken']);
+        $res = $apiPlus->get($this->resource, ['page' => $this->page]);
 
-        while ($rows = $apiPlus->getPaginate($this->resource, $this->getParams)) {
-            foreach ($rows as $key => $value) {
-                $this->importOne($value);
-            }
+        foreach (($res->data ?? null) as $value) {
+            $this->importOne($value);
         }
+
+        if ($this->page == ($res->meta->last_page ?? null)) {
+            return dispatch(new $this->nextJob($this->request));
+        }
+
+        $this->page++;
+
+        dispatch(new $this->job($this->request, $this->page));
     }
 
     public function importOne(object $item) {}

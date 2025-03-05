@@ -3,10 +3,8 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
@@ -19,9 +17,9 @@ class CategoryJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Request $request)
+    public function __construct(array $request, int $page = 1)
     {
-        dispatch(new ColorJob($request));
+        //dispatch(new ColorJob($request));
     }
 
     /**
@@ -31,6 +29,6 @@ class CategoryJob implements ShouldQueue
      */
     public function handle()
     {
-        //
+        
     }
 }
