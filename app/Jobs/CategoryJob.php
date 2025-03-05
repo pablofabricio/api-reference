@@ -2,15 +2,19 @@
 
 namespace App\Jobs;
 
-use Illuminate\Bus\Queueable;
+use App\Services\CategoryMigrateService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class CategoryJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, Queueable, SerializesModels, InteractsWithQueue;
+
+    protected array $request;
+    protected int $page;
 
     /**
      * Create a new job instance.
@@ -19,7 +23,8 @@ class CategoryJob implements ShouldQueue
      */
     public function __construct(array $request, int $page = 1)
     {
-        //dispatch(new ColorJob($request));
+        $this->request = $request; 
+        $this->page = $page; 
     }
 
     /**
@@ -27,8 +32,10 @@ class CategoryJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
+        $service = new CategoryMigrateService($this->request, $this->page);
         
+        $service->import($this->request);
     }
 }

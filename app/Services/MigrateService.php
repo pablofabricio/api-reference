@@ -11,7 +11,7 @@ abstract class MigrateService
     protected $resource; 
     protected ResourceRepository $resourceRepository;
     protected string $job; 
-    protected string $nextJob; 
+    protected string|null $nextJob; 
 
     public function import()
     {
@@ -23,6 +23,8 @@ abstract class MigrateService
         }
 
         if ($this->page == ($res->meta->last_page ?? null)) {
+            if (blank($this->nextJob)) return;
+            
             return dispatch(new $this->nextJob($this->request));
         }
 
