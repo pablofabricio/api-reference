@@ -2,6 +2,15 @@
 
 Esta aplicação é responsável pelo processamento de duplicação de lojas na plataforma Bagy.
 
+## Tecnologias Utilizadas
+
+A aplicação utiliza as seguintes tecnologias e serviços:
+- **PHP 8.3** (Rodando no contêiner `api-migrations-php`)
+- **Laravel** 12.0
+- **MongoDB** (Banco de dados principal)
+- **Nginx** (Servidor web)
+- **Docker** e **Docker Compose** (Gerenciamento de contêineres)
+
 ## Endpoints
 
 ### Migrar uma loja
@@ -17,7 +26,7 @@ Esta aplicação é responsável pelo processamento de duplicação de lojas na 
   "toToken": "seu_token_destino"
 }
 
-- Installation
+Installation
 Start the Docker containers:
 ```sh
 docker-compose up -d
