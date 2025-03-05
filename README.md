@@ -25,6 +25,7 @@ A aplicação utiliza as seguintes tecnologias e serviços:
   "fromToken": "seu_token_origem",
   "toToken": "seu_token_destino"
 }
+```
 
 Installation
 Start the Docker containers:
