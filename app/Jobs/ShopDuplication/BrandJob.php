@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\ShopDuplication;
 
-use App\Services\BrandMigrateService;
+use App\Services\ShopDuplication\BrandMigrateService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;

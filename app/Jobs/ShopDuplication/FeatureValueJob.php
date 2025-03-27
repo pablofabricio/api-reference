@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\ShopDuplication;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AttributeJob implements ShouldQueue
+class FeatureValueJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -21,7 +21,7 @@ class AttributeJob implements ShouldQueue
      */
     public function __construct(Request $request)
     {
-        dispatch(new AttributeValueJob($request));
+        dispatch(new ProductJob($request));
     }
 
     /**

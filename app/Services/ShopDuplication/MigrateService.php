@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\ShopDuplication;
 
 use App\Repositories\ResourceRepository;
+use App\Services\ApiPlusRequestService;
 
 abstract class MigrateService 
 {

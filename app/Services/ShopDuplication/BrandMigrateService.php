@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\ShopDuplication;
 
 use App\Helpers\Utils;
-use App\Jobs\BrandJob;
-use App\Jobs\CategoryJob;
+use App\Jobs\ShopDuplication\BrandJob;
+use App\Jobs\ShopDuplication\CategoryJob;
 use App\Repositories\ResourceRepository;
+use App\Services\ApiPlusRequestService;
 
 class BrandMigrateService extends MigrateService
 {

@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 
 class ApiPlusRequestService extends RestRequestService
 {
-    public function __construct($token)
+    public function __construct(string $token)
     {
         $this->client = new Client([
             'base_uri' => config('services.api-plus.url'),
