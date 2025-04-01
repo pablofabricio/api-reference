@@ -7,9 +7,9 @@ use App\Jobs\ShopImportation\ShopImportJob;
 use App\Repositories\ShopImportationRepository;
 use App\Services\ApiPlusRequestService;
 use App\Services\ShopImportation\DTO\ShopImportationDto;
+use App\Services\ShopImportation\Enums\EventsStatusEnum;
 use App\Services\ShopImportation\Events\ShopImportationEvent;
 use App\Services\ShopImportation\Importers\ShopImporterInterface;
-use Illuminate\Support\Facades\Storage;
 
 class ShopImporterService implements ShopImporterInterface 
 {
@@ -24,18 +24,21 @@ class ShopImporterService implements ShopImporterInterface
 
     public function process(ShopImportationEvent $event): void
     {
-        $records = $event->recordsToArray();
-        
-        if (empty($records)) {
+        if ($event->getStatus() !== EventsStatusEnum::ON_QUEUE) {
             return;
         }
-
-        $record = array_shift($records);
-        $event->setItem($record); 
-        dispatch(new ShopImportItem($event))->onQueue('shop-importation');
-
-        Storage::disk('local')->put($requestData['filePath'], file_get_contents($file));
+    
+        $records = $event->generateRecords($event->getCurrentIndex() ?? 0);
+    
+        if (!$records->valid()) {
+            $event->setStatus(EventsStatusEnum::FINISHED);
+            return;
+        }
+    
+        $event->setItem($records->current());
+        $event->setCurrentIndex($event->getCurrentIndex() + 1);
         
+        dispatch(new ShopImportItem($event))->onQueue('shop-importation');
         dispatch(new ShopImportJob($event))->onQueue('shop-importation');
     }
 
@@ -43,7 +46,7 @@ class ShopImporterService implements ShopImporterInterface
     {
         $item = $event->getItem();
 
-        if ($this->shopImportationRepository->find($event->getResource(), $item['id'])) {
+        if ($this->shopImportationRepository->find($event->getResource(), $item['external_id'])) {
             return;
         }
 
@@ -52,6 +55,7 @@ class ShopImporterService implements ShopImporterInterface
 
         $item['resource'] = $event->getResource();
         $item['to_id'] = $response->id;
+        $item['token'] = $event->getToken();
         $data = ShopImportationDto::fromArray($item)->toArray(); 
 
         $this->shopImportationRepository->insert($data);

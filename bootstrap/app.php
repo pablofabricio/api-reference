@@ -21,5 +21,46 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        
+        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
+            return response()->json([
+                'message' => 'Resource not found'
+            ], 404);
+        });
+    
+        $exceptions->renderable(function (AccessDeniedHttpException $e, Request $request) {
+            return response()->json([
+                'message' => 'Access denied'
+            ], 403);
+        });
+    
+        $exceptions->renderable(function (AuthenticationException $e, Request $request) {
+            return response()->json([
+                'message' => 'Unauthenticated'
+            ], 401);
+        });
+    
+        $exceptions->renderable(function (AuthorizationException $e, Request $request) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        });
+    
+        $exceptions->renderable(function (QueryException $e, Request $request) {
+            return response()->json([
+                'message' => 'Database error'
+            ], 500);
+        });
+    
+        $exceptions->renderable(function (\Illuminate\Validation\ValidationException $e, Request $request) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $e->errors()
+            ], 422);
+        });
+    
+        $exceptions->renderable(function (Throwable $e, Request $request) {
+            return response()->json([
+                'message' => 'Internal server error'
+            ], 500);
+        });
     })->create();

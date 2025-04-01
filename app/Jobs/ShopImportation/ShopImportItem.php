@@ -3,7 +3,7 @@
 namespace App\Jobs\ShopImportation;
 
 use App\Services\ShopImportation\Events\ShopImportationEvent;
-use App\Services\ShopImportation\Importers\ImporterFactory;
+use App\Services\ShopImportation\Factories\ImporterFactory;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;

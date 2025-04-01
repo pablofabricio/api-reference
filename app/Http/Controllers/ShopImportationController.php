@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Services\ShopImportation\ShopImportationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
 
 class ShopImportationController extends Controller
 {

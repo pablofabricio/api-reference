@@ -6,6 +6,7 @@ use App\Services\ShopImportation\Adapters\CsvFileAdapter;
 use App\Services\ShopImportation\Enums\ImporterResourcesEnum;
 use App\Services\ShopImportation\Mappers\ProductMapper;
 use App\Services\ShopImportation\Validators\ProductsCsvValidator;
+use Generator;
 
 class ProductsImportationCsvEvent extends ShopImportationEvent
 {
@@ -15,13 +16,18 @@ class ProductsImportationCsvEvent extends ShopImportationEvent
         $this->setItem($item);
     }
 
-    public function recordsToArray(): array
+    public function generateRecords(int $startIndex = 0): \Generator
     {
         $validator = app(ProductsCsvValidator::class);
         $this->fileAdapter = new CsvFileAdapter($this->request['filePath'], $validator);
         
-        $fileData = $this->fileAdapter->read();
+        $index = 0;
 
-        return ProductMapper::map($fileData);
+        foreach ($this->fileAdapter->read() as $record) {
+            if ($index++ < $startIndex) {
+                continue; 
+            }
+            yield ProductMapper::map($record);
+        }
     }
 }

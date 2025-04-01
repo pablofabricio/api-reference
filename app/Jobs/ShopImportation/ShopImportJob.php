@@ -9,9 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-
-use function Illuminate\Log\log;
 
 class ShopImportJob implements ShouldQueue
 {
@@ -36,7 +33,6 @@ class ShopImportJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info($this->event->getResource());
         $importer = ImporterFactory::getInstance($this->event->getResource());
         $importer->process($this->event); 
     }

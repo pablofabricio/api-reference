@@ -2,10 +2,9 @@
 
 namespace App\Services\ShopImportation\Mappers;
 
+use Generator;
+
 interface MapperInterface
 {
-    /**
-     * @return array
-     */
     public static function map(array $data): array;
 }

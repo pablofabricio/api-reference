@@ -22,7 +22,7 @@ class ShopImportationDto
         return new self(
             $item['token'],
             $item['resource'],
-            $item['from_id'],
+            $item['external_id'],
             $item['to_id']
         );
     }

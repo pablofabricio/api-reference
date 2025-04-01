@@ -2,23 +2,26 @@
 
 namespace App\Services\ShopImportation\Importers;
 
-use App\DTO\CategoryDto;
 use App\Services\ShopImportation\DTO\BrandDto;
-use App\Services\ShopImportation\DTO\RedirectDto;
-use App\Services\ShopImportation\Enums\ImporterResourcesEnum;
 use App\Services\ShopImportation\Events\BrandsImportationCsvEvent;
 use App\Services\ShopImportation\Events\ShopImportationEvent;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
 
 class ProductImporter extends ShopImporterService
 {
     public function import(ShopImportationEvent $event): void
     {
         $item = $event->getItem();
-        $this->importCategory($item);
-       
-        $brandEvent = new BrandsImportationCsvEvent(BrandDto::fromArray($item)->toArray());
+        
+        $brandEvent = new BrandsImportationCsvEvent();
+        $brandEvent->setItem(BrandDto::fromArray($item)->toArray());
+        $brandEvent->setRequest($event->getRequest());
         parent::import($brandEvent); 
+        
+        $this->importCategory($item);
+        // attribute
+        // redirect
+        // product 
     }
 
     private function importCategory(array $item): void

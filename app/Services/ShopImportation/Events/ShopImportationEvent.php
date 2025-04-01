@@ -3,14 +3,18 @@
 namespace App\Services\ShopImportation\Events;
 
 use App\Services\ShopImportation\Adapters\FileAdapterInterface;
+use App\Services\ShopImportation\Enums\EventsStatusEnum;
+use Generator;
 
 abstract class ShopImportationEvent 
 {
     protected string $resource;
     protected array $request;
     protected array $item;
+    protected array $records;
     protected FileAdapterInterface $fileAdapter;
-
+    protected string $status;
+    private ?int $currentIndex = null;
     
     function setRequest(array $request): void
     {
@@ -27,9 +31,9 @@ abstract class ShopImportationEvent
         return $this->request['token'];
     }
 
-    function setItem(array $item): array
+    function setItem(array $item): void
     {
-        return $this->item = $item;
+        $this->item = $item;
     }
 
     function getItem(): array
@@ -37,13 +41,43 @@ abstract class ShopImportationEvent
         return $this->item ?? [];
     }
 
+    function setRecords(array $records): void
+    {
+        $this->records = $records;
+    }
+
+    function getRecords(): array
+    {
+        return $this->records;
+    }
+
+    function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
+
+    function getStatus(): string
+    {
+        return $this->string ?? EventsStatusEnum::ON_QUEUE;
+    }
+
     function getResource(): string
     {
         return $this->resource;
     }
 
-    function recordsToArray(): array
+    function generateRecords(int $startIndex = 0): Generator
     {
-        return [];
+        return yield;
+    }
+
+    public function setCurrentIndex(?int $index): void
+    {
+        $this->currentIndex = $index;
+    }
+
+    public function getCurrentIndex(): ?int
+    {
+        return $this->currentIndex;
     }
 }

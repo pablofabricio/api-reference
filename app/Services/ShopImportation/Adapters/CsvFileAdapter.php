@@ -3,6 +3,7 @@
 namespace App\Services\ShopImportation\Adapters;
 
 use App\Services\ShopImportation\Validators\CsvValidatorInterface;
+use Generator;
 use Illuminate\Support\Facades\Storage;
 
 class CsvFileAdapter implements FileAdapterInterface
@@ -21,23 +22,29 @@ class CsvFileAdapter implements FileAdapterInterface
         $this->filepath = $filepath;
     }
 
-    public function read(): array
+    public function read(): Generator
     {
         if (!Storage::disk('local')->exists($this->filepath)) {
-            return [];
+            return; 
         }
-
+    
         $file = Storage::disk('local')->readStream($this->filepath);
-        $data = [];
-
-        while (false !== ($row = fgetcsv($file, 0, ',', '"'))) {
-            $data[] = $row;
+        
+        if (!$file) {
+            return;
         }
-
-        if (!$this->validator->validate($data)) {
-            return []; 
+    
+        $header = fgetcsv($file, 0, ',', '"');
+    
+        if (!$this->validator->validate([$header])) {
+            fclose($file);
+            return;
         }
-
-        return $data; 
+    
+        while (($row = fgetcsv($file, 0, ',', '"')) !== false) {
+            yield $row;
+        }
+    
+        fclose($file);
     }
 }

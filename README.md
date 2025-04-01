@@ -51,6 +51,7 @@ composer install
 Run Queue:
 ```sh
 php artisan queue:work
+php artisan queue:work --queue=shop-importation
 ```
 
 - Contact
