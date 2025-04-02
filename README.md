@@ -13,11 +13,11 @@ A aplicação utiliza as seguintes tecnologias e serviços:
 
 ## Endpoints
 
-### Migrar uma loja
+### Migrar uma loja bagy para bagy
 
 **Método:** `POST`
 
-**URL:** `{url}/migrations`
+**URL:** `{url}/api/migrations`
 
 **Body:**
 ```json
@@ -25,6 +25,19 @@ A aplicação utiliza as seguintes tecnologias e serviços:
   "fromToken": "seu_token_origem",
   "toToken": "seu_token_destino"
 }
+```
+
+### Importação de loja externa
+
+**Método:** `POST`
+
+**URL:** `{url}/api/shop-importation`
+
+**form-data:**
+```
+token: "seu_token_destino",
+resource: "sua_entidade",
+file: file.csv
 ```
 
 Installation
