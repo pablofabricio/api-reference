@@ -1,6 +1,6 @@
 # Api-Migrations
 
-Esta aplicação é responsável pelo processamento de duplicação de lojas na plataforma Bagy.
+Esta aplicação é responsável pelo processamento de migraçõees de lojas na plataforma Bagy.
 
 ## Tecnologias Utilizadas
 
