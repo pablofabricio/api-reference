@@ -11,4 +11,5 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/duplicate-shop', [MigrationsController::class, 'duplicateShop']);
 Route::post('/shop-importation', [ShopImportationController::class, 'process']);
+Route::get('/shop-importation/{request_id}', [ShopImportationController::class, 'getStatusByRequestId']);
 

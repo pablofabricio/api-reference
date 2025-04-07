@@ -31,6 +31,11 @@ abstract class ShopImportationEvent
         return $this->request['token'];
     }
 
+    function getRequestId(): string
+    {
+        return $this->request['request_id'];
+    }
+
     function setItem(array $item): void
     {
         $this->item = $item;
@@ -58,7 +63,7 @@ abstract class ShopImportationEvent
 
     function getStatus(): string
     {
-        return $this->string ?? EventsStatusEnum::ON_QUEUE;
+        return $this->status ?? EventsStatusEnum::ON_IMPORT;
     }
 
     function getResource(): string

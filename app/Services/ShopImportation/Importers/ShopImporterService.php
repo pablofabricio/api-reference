@@ -10,28 +10,34 @@ use App\Services\ShopImportation\DTO\ShopImportationDto;
 use App\Services\ShopImportation\Enums\EventsStatusEnum;
 use App\Services\ShopImportation\Events\ShopImportationEvent;
 use App\Services\ShopImportation\Importers\ShopImporterInterface;
+use App\Services\ShopImportation\ShopImportationLogger;
+use Illuminate\Support\Facades\Log;
 
 class ShopImporterService implements ShopImporterInterface 
 {
     private ShopImportationRepository $shopImportationRepository;
+    private ShopImportationLogger $logger;
 
     function __construct(
         ShopImportationRepository $shopImportationRepository,
+        ShopImportationLogger $logger
     )
     {
         $this->shopImportationRepository = $shopImportationRepository;
+        $this->logger = $logger;
     }
 
     public function process(ShopImportationEvent $event): void
     {
-        if ($event->getStatus() !== EventsStatusEnum::ON_QUEUE) {
+        if ($event->getStatus() == EventsStatusEnum::FINISHED) {
             return;
         }
     
         $records = $event->generateRecords($event->getCurrentIndex() ?? 0);
-    
+
         if (!$records->valid()) {
             $event->setStatus(EventsStatusEnum::FINISHED);
+            $this->logger->updateStatus($event->getRequestId(), $event->getStatus());
             return;
         }
     
@@ -50,14 +56,23 @@ class ShopImporterService implements ShopImporterInterface
             return;
         }
 
-        $api = new ApiPlusRequestService($event->getToken()); 
-        $response = $api->post($event->getResource(), $item); 
+        try {
+            $api = new ApiPlusRequestService($event->getToken()); 
+            $response = $api->post($event->getResource(), $item); 
 
-        $item['resource'] = $event->getResource();
-        $item['to_id'] = $response->id;
-        $item['token'] = $event->getToken();
-        $data = ShopImportationDto::fromArray($item)->toArray(); 
-
-        $this->shopImportationRepository->insert($data);
+            $item['resource'] = $event->getResource();
+            $item['to_id'] = $response->id;
+            $item['token'] = $event->getToken();
+            $item['request_id'] = $event->getRequestId();
+            $data = ShopImportationDto::fromArray($item)->toArray(); 
+            
+            $this->shopImportationRepository->insert($data);
+        } catch (\Throwable $th) {
+            $this->logger->addError($event->getRequestId(), [
+                'message' => $th->getMessage(),
+                'item' => $event->getItem(),
+                'resource' => $event->getResource(),
+            ]);
+        }
     }
 }

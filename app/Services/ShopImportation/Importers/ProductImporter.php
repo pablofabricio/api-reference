@@ -5,7 +5,6 @@ namespace App\Services\ShopImportation\Importers;
 use App\Services\ShopImportation\DTO\BrandDto;
 use App\Services\ShopImportation\Events\BrandsImportationCsvEvent;
 use App\Services\ShopImportation\Events\ShopImportationEvent;
-use Illuminate\Support\Facades\Log;
 
 class ProductImporter extends ShopImporterService
 {

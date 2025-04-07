@@ -23,8 +23,15 @@ class ShopImportationController extends Controller
             'file' => 'required|file',
         ]);
 
-        $this->service->process($request); 
+        $data = $this->service->process($request); 
 
-        return response()->json('', Response::HTTP_NO_CONTENT);
+        return response()->json($data, Response::HTTP_CREATED);
+    }
+
+    public function getStatusByRequestId(string $requestId)
+    {
+        $data = $this->service->getStatusByRequestId($requestId);
+
+        return response()->json($data, Response::HTTP_OK);
     }
 }

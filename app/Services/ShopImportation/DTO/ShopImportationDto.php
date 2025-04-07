@@ -8,13 +8,15 @@ class ShopImportationDto
     private string $resource;
     private string $from_id;
     private string $to_id;
+    private string $request_id;
 
-    public function __construct(string $token, string $resource, string $from_id, string $to_id)
+    public function __construct(string $token, string $resource, string $from_id, string $to_id,string $request_id)
     {
         $this->token = $token;
         $this->resource = $resource;
         $this->from_id = $from_id;
         $this->to_id = $to_id;
+        $this->request_id = $request_id;
     }
 
     public static function fromArray(array $item): self
@@ -23,7 +25,8 @@ class ShopImportationDto
             $item['token'],
             $item['resource'],
             $item['external_id'],
-            $item['to_id']
+            $item['to_id'],
+            $item['request_id'],
         );
     }
 
@@ -34,6 +37,7 @@ class ShopImportationDto
             'resource' => $this->resource,
             'from_id' => $this->from_id,
             'to_id' => $this->to_id,
+            'request_id' => $this->request_id,
         ];
     }
 

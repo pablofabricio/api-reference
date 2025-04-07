@@ -2,6 +2,8 @@
 
 namespace App\Services\ShopImportation\Adapters;
 
+use App\Services\ShopImportation\Events\ShopImportationEvent;
+use App\Services\ShopImportation\ShopImportationLogger;
 use App\Services\ShopImportation\Validators\CsvValidatorInterface;
 use Generator;
 use Illuminate\Support\Facades\Storage;
@@ -9,12 +11,19 @@ use Illuminate\Support\Facades\Storage;
 class CsvFileAdapter implements FileAdapterInterface
 {
     protected string $filepath;
+    protected ShopImportationEvent $event;
     protected CsvValidatorInterface $validator;
+    protected ShopImportationLogger $logger;
 
-    public function __construct(string $filepath, CsvValidatorInterface $validator)
+    public function __construct(
+        ShopImportationEvent $event, 
+        CsvValidatorInterface $validator,
+    )
     {
-        $this->setFilepath($filepath);
+        $this->event = $event;
+        $this->setFilepath($event->getRequest()['filePath'] ?? '');
         $this->validator = $validator;
+        $this->logger = app(ShopImportationLogger::class);
     }
 
     public function setFilepath(string $filepath): void
@@ -38,6 +47,10 @@ class CsvFileAdapter implements FileAdapterInterface
     
         if (!$this->validator->validate([$header])) {
             fclose($file);
+            $this->logger->addError($this->event->getRequestId(), [
+                'message' => json_encode($this->validator->getErrors()),
+                'resource' => $this->event->getResource(),
+            ]);
             return;
         }
     

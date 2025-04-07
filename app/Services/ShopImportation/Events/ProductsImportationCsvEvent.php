@@ -19,8 +19,8 @@ class ProductsImportationCsvEvent extends ShopImportationEvent
     public function generateRecords(int $startIndex = 0): \Generator
     {
         $validator = app(ProductsCsvValidator::class);
-        $this->fileAdapter = new CsvFileAdapter($this->request['filePath'], $validator);
-        
+        $this->fileAdapter = new CsvFileAdapter($this, $validator);
+
         $index = 0;
 
         foreach ($this->fileAdapter->read() as $record) {
