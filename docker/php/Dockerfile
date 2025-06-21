@@ -6,11 +6,10 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libcurl4-openssl-dev \
     libzip-dev \
+    libpq-dev \
     git \
     unzip \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb \
-    && docker-php-ext-install opcache zip
+    && docker-php-ext-install zip pdo pdo_pgsql
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
