@@ -40,6 +40,16 @@ abstract class BaseRepository
     }
 
     /**
+     * Public accessor for the model instance used by the repository.
+     *
+     * @return Model
+     */
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    /**
      * Pagina os registros com o valor padrão do modelo.
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator

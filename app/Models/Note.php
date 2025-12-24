@@ -2,33 +2,42 @@
 
 namespace App\Models;
 
+use App\Enums\NoteVisibility;
+use Illuminate\Validation\Rule;
+
 class Note extends BaseModel
 {
-    protected $fillable = ['user_id', 'content', 'book_id', 'is_public', 'created_at'];
-
+    protected $fillable = [
+        'user_id',
+        'content',
+        'reference_node_id',
+        'visibility',
+    ];
+    
+    protected $casts = [
+        'visibility' => NoteVisibility::class,
+    ];
+    
+    public static function rules(): array
+    {
+        $visibilityValues = array_map(fn($e) => $e->value, NoteVisibility::cases());
+    
+        return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'content' => ['required', 'string'],
+            'reference_node_id' => ['nullable', 'integer', 'exists:reference_nodes,id'],
+            'visibility' => ['required', Rule::in($visibilityValues)],
+        ];
+    }
+    
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    public function book()
+    
+    public function referenceNode()
     {
-        return $this->belongsTo(Book::class);
-    }
-
-    public function pages()
-    {
-        return $this->belongsToMany(Page::class, 'note_pages');
-    }
-
-    public function chapters()
-    {
-        return $this->belongsToMany(Chapter::class, 'note_chapters');
-    }
-
-    public function verses()
-    {
-        return $this->belongsToMany(Verse::class, 'note_verses');
+        return $this->belongsTo(ReferenceNode::class, 'reference_node_id');
     }
 }
 

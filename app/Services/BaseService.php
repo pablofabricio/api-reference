@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class BaseService
 {
@@ -56,6 +57,22 @@ class BaseService
      */
     public function create(array $data): Model
     {
+        $model = $this->repository->getModel();
+        $rules = [];
+        
+        if (method_exists($model, 'rules')) {
+            $rules = $model::rules();
+        } elseif (isset($model::$rules) && is_array($model::$rules)) {
+            $rules = $model::$rules;
+        }
+
+        if (!empty($rules)) {
+            $v = Validator::make($data, $rules);
+            if ($v->fails()) {
+                throw new ValidationException($v);
+            }
+        }
+
         return $this->repository->create($data);
     }
 
@@ -68,6 +85,22 @@ class BaseService
      */
     public function update(int $id, array $data): ?Model
     {
+        $model = $this->repository->getModel();
+        $rules = [];
+
+        if (method_exists($model, 'rules')) {
+            $rules = $model::rules();
+        } elseif (isset($model::$rules) && is_array($model::$rules)) {
+            $rules = $model::$rules;
+        }
+
+        if (!empty($rules)) {
+            $v = Validator::make($data, $rules);
+            if ($v->fails()) {
+                throw new ValidationException($v);
+            }
+        }
+
         return $this->repository->update($id, $data);
     }
 

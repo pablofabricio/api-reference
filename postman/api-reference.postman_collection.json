@@ -1,0 +1,112 @@
+{
+  "info": {
+    "name": "api-reference",
+    "_postman_id": "",
+    "description": "Postman collection for the api-reference Laravel app. Uses {{host}} and {{token}} environment variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"secret\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/api/auth/login",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{host}}/api/auth/logout",
+              "host": ["{{host}}"],
+              "path": ["api","auth","logout"]
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key":"Authorization","value":"Bearer {{token}}"}
+            ],
+            "url": {"raw":"{{host}}/api/auth/me","host":["{{host}}"],"path":["api","auth","me"]}
+          }
+        },
+        {
+          "name": "Refresh",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"}],
+            "url": {"raw":"{{host}}/api/auth/refresh","host":["{{host}}"],"path":["api","auth","refresh"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notes",
+      "item": [
+        {"name":"List Notes","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/notes","host":["{{host}}"],"path":["api","notes"]}}},
+        {"name":"Create Note","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"title\": \"Example note\",\n  \"content\": \"Hello world\"\n}"},"url":{"raw":"{{host}}/api/notes","host":["{{host}}"],"path":["api","notes"]}}},
+        {"name":"Get Note","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/notes/{{noteId}}","host":["{{host}}"],"path":["api","notes","{{noteId}}"]}}},
+        {"name":"Update Note","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"title\": \"Updated title\"\n}"},"url":{"raw":"{{host}}/api/notes/{{noteId}}","host":["{{host}}"],"path":["api","notes","{{noteId}}"]}}},
+        {"name":"Delete Note","request":{"method":"DELETE","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/notes/{{noteId}}","host":["{{host}}"],"path":["api","notes","{{noteId}}"]}}}
+      ]
+    },
+    {
+      "name": "Channels",
+      "item": [
+        {"name":"List Channels","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/channels","host":["{{host}}"],"path":["api","channels"]}}},
+        {"name":"Create Channel","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"My channel\"\n}"},"url":{"raw":"{{host}}/api/channels","host":["{{host}}"],"path":["api","channels"]}}},
+        {"name":"Get Channel","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/channels/{{channelId}}","host":["{{host}}"],"path":["api","channels","{{channelId}}"]}}},
+        {"name":"Update Channel","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"Renamed\"\n}"},"url":{"raw":"{{host}}/api/channels/{{channelId}}","host":["{{host}}"],"path":["api","channels","{{channelId}}"]}}},
+        {"name":"Delete Channel","request":{"method":"DELETE","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/channels/{{channelId}}","host":["{{host}}"],"path":["api","channels","{{channelId}}"]}}}
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {"name":"List Users","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/users","host":["{{host}}"],"path":["api","users"]}}},
+        {"name":"Create User","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"New user\",\n  \"email\": \"new@example.com\",\n  \"password\": \"secret\"\n}"},"url":{"raw":"{{host}}/api/users","host":["{{host}}"],"path":["api","users"]}}},
+        {"name":"Get User","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/users/{{userId}}","host":["{{host}}"],"path":["api","users","{{userId}}"]}}},
+        {"name":"Update User","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"Updated\"\n}"},"url":{"raw":"{{host}}/api/users/{{userId}}","host":["{{host}}"],"path":["api","users","{{userId}}"]}}},
+        {"name":"Delete User","request":{"method":"DELETE","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":{"raw":"{{host}}/api/users/{{userId}}","host":["{{host}}"],"path":["api","users","{{userId}}"]}}}
+      ]
+    }
+  ],
+  "protocolProfileBehavior": {}
+}

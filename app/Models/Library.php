@@ -4,10 +4,17 @@ namespace App\Models;
 
 class Library extends BaseModel
 {
+    public static function rules(): array
+    {
+        return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'name' => ['required', 'string', 'max:255'],
+        ];
+    }
+    
     protected $fillable = [
-        'user_id', 
-        'book_id', 
-        'created_at'
+        'user_id',
+        'name',
     ];
 
     public function user()
@@ -15,8 +22,13 @@ class Library extends BaseModel
         return $this->belongsTo(User::class);
     }
 
-    public function book()
+    public function items()
     {
-        return $this->belongsTo(Book::class);
+        return $this->hasMany(LibraryItem::class);
+    }
+
+    public function references()
+    {
+        return $this->belongsToMany(Reference::class, 'library_items');
     }
 }

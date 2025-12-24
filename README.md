@@ -1,74 +1,84 @@
-# Api-Migrations
+# api-reference
 
-Esta aplicação é responsável pelo processamento de migraçõees de lojas na plataforma Bagy.
+API para gerenciar referências e notas vinculadas a nós de referência.
 
-## Tecnologias Utilizadas
+Visão geral
 
-A aplicação utiliza as seguintes tecnologias e serviços:
-- **PHP 8.3** (Rodando no contêiner `api-migrations-php`)
-- **Laravel** 12.0
-- **MongoDB** (Banco de dados principal)
-- **Nginx** (Servidor web)
-- **Docker** e **Docker Compose** (Gerenciamento de contêineres)
+Esta API mantém um modelo simples e genérico de referências (por exemplo: BÍblia, música, poema, livro, sermão) e seus nós estruturados (livro, capítulo, verso, página, estrofe, linha, parágrafo, etc.). Usuários podem criar notas vinculadas a um nó de referência, publicar notas como privadas, públicas ou associadas a canais.
 
-## Endpoints
+Principais conceitos:
+- Users: perfis de usuário e autenticação
+- References: metadados da obra/fonte
+- ReferenceNodes: estrutura hierárquica dentro de uma referência (nós)
+- Notes: anotações apontando para um ReferenceNode
+- Libraries: coleções pessoais de referências
+- Channels: espaços temáticos com membros e referências associadas
 
-### Migrar uma loja bagy para bagy
+Modelo de dados (resumo):
+Users
+- id
+- name
+- email
+- password_hash
 
-**Método:** `POST`
+notes
+- id
+- user_id
+- content
+- reference_node_id
+- visibility (PRIVATE | PUBLIC | CHANNEL)
 
-**URL:** `{url}/api/migrations`
+references
+- id
+- type (BIBLE | MUSIC | POEM | BOOK | SERMON)
+- title
+- abbreviation
+- author
+- description
 
-**Body:**
-```json
-{
-  "fromToken": "seu_token_origem",
-  "toToken": "seu_token_destino"
-}
-```
+reference_nodes
+- id
+- type (BOOK | CHAPTER | VERSE | PAGE | SESSION | STANZA | LINE | PARAGRAPH)
+- content
+- label
+- reference_id
+- parent_node_id (nullable)
+- position
+(reference_id, parent_node_id, position) UNIQUE
 
-### Importação de loja externa
+libraries
+- id
+- user_id
+- name
 
-**Método:** `POST`
+library_items
+- library_id
+- reference_id
 
-**URL:** `{url}/api/shop-importation`
+channels
+- id
+- name
+- created_by (user)
+- description
 
-**form-data:**
-```
-token: "seu_token_destino",
-resource: "sua_entidade",
-file: file.csv
-```
+channel_references
+- id
+- channel_id
+- reference_id
 
-Installation
-Start the Docker containers:
-```sh
-docker-compose up -d
-```
+channel_members
+- channel_id
+- user_id
+- role (OWNER | MODERATOR | MEMBER)
+- joined_at
+(channel_id, user_id) UNIQUE
 
-Access the Docker container's shell:
-```sh
-docker-compose exec api-migrations-php bash
-```
+Como contribuir
+1. Configure o `.env` com variáveis locais
+2. Instale dependências: `composer install`
+3. Gere e rode migrations: `php artisan migrate`
+4. Inicie o servidor: `php artisan serve`
 
-Copy and Paste .env.example as .env
-```sh
-Copy the contents of .env.example and create a new file named .env. Then, paste the copied contents into .env. Ensure to adjust the variables according to your environment.
-```
-
-Install dependencies using Composer:
-```sh
-composer install
-```
-
-Run Queue:
-```sh
-php artisan queue:work
-php artisan queue:work --queue=shop-importation
-```
-
-- Contact
-For any inquiries or support, please feel free to contact:
-```sh
+Contato
 Pablo Fabrício - fabriciopablo2000@gmail.com
-```
+- channel_id

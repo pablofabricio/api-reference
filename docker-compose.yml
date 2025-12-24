@@ -1,8 +1,10 @@
+version: "3.8"
+
 services:
   app:
     build:
-      context: ./docker/php
-    container_name: api-book-notes-php
+        context: ./docker/php
+    container_name: api-reference-php
     restart: unless-stopped
     working_dir: /var/www
     volumes:
@@ -10,13 +12,13 @@ services:
     depends_on:
       - db
     networks:
-      api-book-notes:
+      api-reference:
         aliases:
           - php-fpm
 
   webserver:
     image: nginx:alpine
-    container_name: api-book-notes-nginx
+    container_name: api-reference-nginx
     restart: unless-stopped
     ports:
       - "8000:81"
@@ -24,26 +26,34 @@ services:
       - ./:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
-      - api-book-notes
+      - api-reference
     depends_on:
       - app
 
   db:
-    image: postgres
+    image: postgres:14
+    container_name: api-reference-db
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: book-notes
+      POSTGRES_DB: api_reference
       POSTGRES_USER: api-user
       POSTGRES_PASSWORD: secret
     ports:
       - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
     networks:
-      - api-book-notes
+      - api-reference
 
 networks:
-  api-book-notes:
+  api-reference:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.40.0.0/24
 
 volumes:
   db:
+    driver: local
   app-data:
     driver: local

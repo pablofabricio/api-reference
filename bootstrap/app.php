@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $router = app('router');
+        $router->aliasMiddleware('auth.jwt', \App\Http\Middleware\AuthJwt::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
@@ -59,6 +60,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     
         $exceptions->renderable(function (Throwable $e, Request $request) {
+            dd($e);
             return response()->json([
                 'message' => 'Internal server error'
             ], 500);
