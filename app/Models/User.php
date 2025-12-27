@@ -44,15 +44,9 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    // Relations
     public function notes()
     {
         return $this->hasMany(Note::class);
-    }
-
-    public function libraries()
-    {
-        return $this->hasMany(Library::class);
     }
 
     public function channelsOwned()

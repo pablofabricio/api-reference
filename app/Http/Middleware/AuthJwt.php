@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Services\Auth\Exception\AuthExceptionService;
+use Illuminate\Support\Facades\Auth;
 
 class AuthJwt extends BaseMiddleware
 {
@@ -20,8 +21,12 @@ class AuthJwt extends BaseMiddleware
     public function handle(Request $request, Closure $next)
     {
         try {
-            JWTAuth::parseToken()->authenticate();
-        } 
+            $user = JWTAuth::parseToken()->authenticate();
+            
+            if ($user) {
+                Auth::setUser($user);
+            }
+        }
         catch (\Exception $e) {
             $jwtException = (new AuthExceptionService($e))->getType(); 
             return $jwtException->response();

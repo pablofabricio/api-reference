@@ -39,23 +39,6 @@ CREATE TABLE IF NOT EXISTS reference_nodes (
     UNIQUE(reference_id, parent_node_id, position)
 );
 
--- Bibliotecas e itens de biblioteca
-CREATE TABLE IF NOT EXISTS libraries (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS library_items (
-    id SERIAL PRIMARY KEY,
-    library_id INTEGER NOT NULL REFERENCES libraries(id) ON DELETE CASCADE,
-    reference_id INTEGER NOT NULL REFERENCES "references"(id) ON DELETE CASCADE,
-    UNIQUE(library_id, reference_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- Channels
 CREATE TABLE IF NOT EXISTS channels (

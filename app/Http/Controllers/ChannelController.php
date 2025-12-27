@@ -11,4 +11,10 @@ class ChannelController extends BaseController
     {
         parent::__construct($service, ChannelResource::class);
     }
+
+    public function index()
+    {
+        $paginator = $this->service->getPaginateForUser();
+        return ChannelResource::collection($paginator);
+    }
 }
