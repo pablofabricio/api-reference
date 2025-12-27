@@ -22,6 +22,7 @@ Route::middleware('auth.jwt')->group(function () {
 
     // Resource routes for other models
     Route::apiResource('channels', App\Http\Controllers\ChannelController::class)->only(['index','store','show','update','destroy']);
+    Route::get('channels/{id}/with-references', [App\Http\Controllers\ChannelController::class, 'withReferences']);
     Route::apiResource('channel-members', App\Http\Controllers\ChannelMemberController::class)->only(['index','store','show','update','destroy']);
     Route::apiResource('channel-references', App\Http\Controllers\ChannelReferenceController::class)->only(['index','store','show','update','destroy']);
     Route::apiResource('libraries', App\Http\Controllers\LibraryController::class)->only(['index','store','show','update','destroy']);

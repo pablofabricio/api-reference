@@ -10,4 +10,9 @@ class NoteService extends BaseService
     {
         parent::__construct($repository);
     }
+
+    public function getByReferenceNode(int $referenceNodeId)
+    {
+        return $this->repository->paginateByReferenceNode($referenceNodeId);
+    }
 }

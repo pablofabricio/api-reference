@@ -12,4 +12,21 @@ abstract class BaseModel extends Model
      * @var int
      */
     protected $perPage = 25;
+
+    /**
+     * Default allowed filters for models. Individual models may override this.
+     *
+     * @var array
+     */
+    protected static array $filters = [];
+
+    /**
+     * Return model filters
+     *
+     * @return array
+     */
+    public static function filters(): array
+    {
+        return static::$filters;
+    }
 }

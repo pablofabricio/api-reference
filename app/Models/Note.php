@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\NoteVisibility;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\Model;
 
 class Note extends BaseModel
 {
@@ -17,6 +18,15 @@ class Note extends BaseModel
     protected $casts = [
         'visibility' => NoteVisibility::class,
     ];
+
+    /**
+     * Fields allowed to be used as filters in requests.
+     *
+     * @var array
+     */
+    protected static array $filters = [
+        'reference_node_id',
+    ];
     
     public static function rules(): array
     {
@@ -25,7 +35,8 @@ class Note extends BaseModel
         return [
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'content' => ['required', 'string'],
-            'reference_node_id' => ['nullable', 'integer', 'exists:reference_nodes,id'],
+            // require a reference node: notes must be attached to a node
+            'reference_node_id' => ['required', 'integer', 'exists:reference_nodes,id'],
             'visibility' => ['required', Rule::in($visibilityValues)],
         ];
     }

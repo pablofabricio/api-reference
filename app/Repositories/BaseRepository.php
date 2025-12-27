@@ -56,7 +56,19 @@ abstract class BaseRepository
      */
     public function getPaginate()
     {
-        return $this->model->paginate();
+        $query = $this->model->newQuery();
+
+        if (method_exists($this->model, 'filters')) {
+            $filters = $this->model::filters();
+            foreach ($filters as $field) {
+                $value = request()->query($field);
+                if (!is_null($value) && $value !== '') {
+                    $query->where($field, $value);
+                }
+            }
+        }
+
+        return $query->paginate();
     }
 
     /**
