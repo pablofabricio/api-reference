@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -22,37 +23,25 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json(auth('api')->user());
     }
 
     public function logout()
     {
-        auth()->logout();
+        JWTAuth::parseToken()->invalidate();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
     public function refresh()
     {
-        $token = auth()->refresh();
+        $token = JWTAuth::parseToken()->refresh();
         return $this->respondWithToken($token);
     }
 
     protected function respondWithToken($token)
     {
-        $expires = null;
-
-        try {
-            $apiGuard = auth('api');
-            $defaultGuard = auth();
-
-            if (is_callable([$apiGuard, 'factory'])) {
-                $expires = $apiGuard->factory()->getTTL() * 60;
-            } elseif (is_callable([$defaultGuard, 'factory'])) {
-                $expires = $defaultGuard->factory()->getTTL() * 60;
-            }
-        } catch (\Throwable $e) {
-            $expires = null;
-        }
+        $ttl = config('jwt.ttl');
+        $expires = is_numeric($ttl) ? ((int) $ttl) * 60 : null;
 
         $response = response()->json([
             'access_token' => $token,

@@ -13,6 +13,7 @@ class ChannelResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'created_by' => $this->created_by,
+            'visibility' => $this->visibility,
         ];
 
         if ($this->relationLoaded('references')) {

@@ -1,0 +1,10 @@
+BEGIN;
+
+ALTER TABLE channels
+ADD COLUMN IF NOT EXISTS visibility VARCHAR(20) NOT NULL DEFAULT 'PRIVATE';
+
+UPDATE channels
+SET visibility = 'PRIVATE'
+WHERE visibility IS NULL;
+
+COMMIT;

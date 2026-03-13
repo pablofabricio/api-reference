@@ -11,7 +11,6 @@ Principais conceitos:
 - References: metadados da obra/fonte
 - ReferenceNodes: estrutura hierárquica dentro de uma referência (nós)
 - Notes: anotações apontando para um ReferenceNode
-- Libraries: coleções pessoais de referências
 - Channels: espaços temáticos com membros e referências associadas
 
 Modelo de dados (resumo):
@@ -46,19 +45,11 @@ reference_nodes
 - position
 (reference_id, parent_node_id, position) UNIQUE
 
-libraries
-- id
-- user_id
-- name
-
-library_items
-- library_id
-- reference_id
-
 channels
 - id
 - name
 - created_by (user)
+- visibility (PRIVATE | PUBLIC)
 - description
 
 channel_references
@@ -73,12 +64,85 @@ channel_members
 - joined_at
 (channel_id, user_id) UNIQUE
 
-Como contribuir
-1. Configure o `.env` com variáveis locais
-2. Instale dependências: `composer install`
-3. Gere e rode migrations: `php artisan migrate`
-4. Inicie o servidor: `php artisan serve`
+Regra de canais e membros
+- Um canal pode ser PRIVATE ou PUBLIC.
+- Para entrar em um canal, o usuario deve seguir o canal.
+- Apenas canais PUBLIC podem ser seguidos.
+- Ao seguir um canal, a API cria membership com role MEMBER automaticamente.
+
+Executando com Docker
+
+1. Subir os containers
+
+```bash
+docker compose up -d --build
+```
+
+2. Criar arquivo de ambiente e chaves (uma vez)
+
+```bash
+cp .env.example .env
+docker exec -it api-reference-php php artisan key:generate --force
+docker exec -it api-reference-php php artisan jwt:secret --force
+```
+
+3. Criar schema e popular dados
+
+```bash
+./scripts/apply_ddl.sh
+./scripts/apply_seed.sh
+```
+
+4. Acessar a API
+
+- Base URL: http://localhost:8000/api
+
+Comandos uteis dentro do container
+
+```bash
+docker exec -it api-reference-php composer install
+docker exec -it api-reference-php php artisan route:list
+docker exec -it api-reference-php php artisan test
+docker exec -it api-reference-php ./vendor/bin/phpunit
+```
+
+Testando no Postman (usuario padrao)
+
+- Email: pablo@example.com
+- Senha: 12345678
+
+Login
+
+- Metodo: POST
+- URL: http://localhost:8000/api/auth/login
+- Headers: Content-Type: application/json
+- Body:
+
+```json
+{
+	"email": "pablo@example.com",
+	"password": "12345678"
+}
+```
+
+Ao fazer login, use o access_token retornado no header Authorization:
+
+```text
+Bearer <access_token>
+```
+
+Exemplo de seguir canal publico
+
+- Metodo: POST
+- URL: http://localhost:8000/api/channel-members
+- Headers: Authorization: Bearer <access_token>
+- Body:
+
+```json
+{
+	"channel_id": 1
+}
+```
 
 Contato
 Pablo Fabrício - fabriciopablo2000@gmail.com
-- channel_id

@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS reference_nodes (
     UNIQUE(reference_id, parent_node_id, position)
 );
 
-
 -- Channels
 CREATE TABLE IF NOT EXISTS channels (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    visibility VARCHAR(20) NOT NULL DEFAULT 'PRIVATE',
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

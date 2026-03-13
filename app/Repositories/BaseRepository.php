@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -54,21 +55,37 @@ abstract class BaseRepository
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getPaginate()
+    public function getPaginate(array $constraints = [])
     {
         $query = $this->model->newQuery();
 
-        if (method_exists($this->model, 'filters')) {
-            $filters = $this->model::filters();
-            foreach ($filters as $field) {
-                $value = request()->query($field);
-                if (!is_null($value) && $value !== '') {
-                    $query->where($field, $value);
-                }
+        foreach ($constraints as $field => $value) {
+            if (!is_null($value)) {
+                $query->where($field, $value);
             }
         }
 
+        $this->applyModelFilters($query);
+
         return $query->paginate();
+    }
+
+    /**
+     * Apply allowed request filters declared by the model.
+     */
+    protected function applyModelFilters(Builder $query): void
+    {
+        if (!method_exists($this->model, 'filters')) {
+            return;
+        }
+
+        $filters = $this->model::filters();
+        foreach ($filters as $field) {
+            $value = request()->query($field);
+            if (!is_null($value) && $value !== '') {
+                $query->where($field, $value);
+            }
+        }
     }
 
     /**
@@ -80,6 +97,14 @@ abstract class BaseRepository
     public function find(int $id): ?Model
     {
         return $this->model->find($id);
+    }
+
+    /**
+     * Find a record by ID ignoring global scopes.
+     */
+    public function findWithoutGlobalScopes(int $id): ?Model
+    {
+        return $this->model->newQueryWithoutScopes()->find($id);
     }
 
     /**
