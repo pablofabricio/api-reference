@@ -76,6 +76,39 @@ class ChannelControllerTest extends TestCase
             ->assertJsonStructure(['errors']);
     }
 
+    public function test_index_returns_member_counts_for_user_channels(): void
+    {
+        $owner = User::factory()->create([
+            'email' => 'channels-index@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+        $member = User::factory()->create([
+            'email' => 'channels-index-member@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+
+        $channelId = $this->createChannel((int) $owner->id, 'PUBLIC');
+        $this->createChannelMember($channelId, (int) $owner->id, 'OWNER');
+        $this->createChannelMember($channelId, (int) $member->id, 'MEMBER');
+
+        $login = $this->postJson('/api/auth/login', [
+            'email' => $owner->email,
+            'password' => '12345678',
+        ])->assertOk();
+
+        $token = (string) $login->json('access_token');
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson('/api/channels');
+
+        $response->assertOk()
+            ->assertJsonFragment([
+                'id' => $channelId,
+                'member_count' => 2,
+                'memberCount' => 2,
+            ]);
+    }
+
     public function test_destroy_allows_channel_creator_to_delete(): void
     {
         $token = $this->authenticateAndGetToken();

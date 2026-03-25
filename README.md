@@ -93,6 +93,12 @@ docker exec -it api-reference-php php artisan jwt:secret --force
 ./scripts/apply_seed.sh
 ```
 
+Se o banco local estiver com drift de migrations (tabelas existentes e historico inconsistente), use:
+
+```bash
+./scripts/reconcile_and_migrate.sh
+```
+
 4. Acessar a API
 
 - Base URL: http://localhost:8000/api

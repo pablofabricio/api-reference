@@ -19,6 +19,7 @@ class ChannelService extends BaseService
 		$userId = Auth::id();
 		$model = $this->repository->getModel();
 		$query = $model->newQuery();
+		$query->withCount('members');
 		$query->where('created_by', $userId)
 		      ->orWhereHas('members', function ($q) use ($userId) {
 				$q->where('user_id', $userId);

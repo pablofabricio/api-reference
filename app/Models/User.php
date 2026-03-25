@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\ChannelVisibility;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +23,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'description',
         'password',
     ];
 
@@ -59,11 +62,49 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(ChannelMember::class);
     }
 
+    public function visibleOwnedChannelsForViewer(?int $viewerId): Collection
+    {
+        $query = $this->channelsOwned();
+
+        $isOwnProfile = $viewerId && $viewerId === (int) $this->id;
+        
+        if (! $isOwnProfile) {
+            if (! $viewerId) {
+                $query->where('visibility', ChannelVisibility::PUBLIC->value);
+            } else {
+                $query->where(function ($q) use ($viewerId) {
+                    $q->where('visibility', ChannelVisibility::PUBLIC->value)
+                      ->orWhereHas('members', function ($memberQuery) use ($viewerId) {
+                          $memberQuery->where('user_id', $viewerId);
+                      });
+                });
+            }
+        }
+
+        return $query->select(['id', 'name', 'description', 'created_by', 'visibility', 'created_at', 'updated_at'])
+            ->withCount('members')
+            ->orderByDesc('id')
+            ->get();
+    }
+
+    public function profilePayload(): array
+    {
+        return [
+            'id' => (int) $this->id,
+            'name' => (string) $this->name,
+            'email' => (string) $this->email,
+            'description' => $this->description,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
+    }
+
     public static function rules(): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'description' => ['nullable', 'string'],
             'password' => ['required', 'string', 'min:8'],
         ];
     }

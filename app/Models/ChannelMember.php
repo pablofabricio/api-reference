@@ -8,6 +8,11 @@ use Illuminate\Validation\Rule;
 
 class ChannelMember extends BaseModel
 {
+	protected static array $filters = [
+		'channel_id',
+		'user_id',
+	];
+
     protected $fillable = [
         'channel_id',
         'user_id',
@@ -21,7 +26,7 @@ class ChannelMember extends BaseModel
     protected static function booted(): void
     {
         static::creating(function (ChannelMember $channelMember) {
-            if (Auth::check()) {
+            if (Auth::check() && ! $channelMember->user_id) {
                 $channelMember->user_id = (int) Auth::id();
             }
         });
