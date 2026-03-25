@@ -59,15 +59,6 @@ VALUES
     now()
   );
 
-WITH rn AS (
-  INSERT INTO reference_nodes (type, content, label, reference_id, parent_node_id, position, created_at, updated_at)
-  VALUES
-    ('BOOK', 'Romanos', 'Romanos', (SELECT id FROM "references" WHERE title = 'Romanos'), NULL, 1, now(), now()),
-    ('BOOK', 'Filipenses', 'Filipenses', (SELECT id FROM "references" WHERE title = 'Filipenses'), NULL, 1, now(), now()),
-    ('BOOK', 'Salmos', 'Salmos', (SELECT id FROM "references" WHERE title = 'Salmos'), NULL, 1, now(), now()),
-    ('BOOK', 'Mateus', 'Mateus', (SELECT id FROM "references" WHERE title = 'Mateus'), NULL, 1, now(), now())
-  RETURNING id, label, reference_id
-)
 INSERT INTO reference_nodes (type, content, label, reference_id, parent_node_id, position, created_at, updated_at)
 VALUES
   (
@@ -75,7 +66,7 @@ VALUES
     'Romanos 1',
     'Romanos 1',
     (SELECT id FROM "references" WHERE title = 'Romanos'),
-    (SELECT id FROM rn WHERE label = 'Romanos'),
+    NULL,
     1,
     now(),
     now()
@@ -85,7 +76,7 @@ VALUES
     'Filipenses 4',
     'Filipenses 4',
     (SELECT id FROM "references" WHERE title = 'Filipenses'),
-    (SELECT id FROM rn WHERE label = 'Filipenses'),
+    NULL,
     1,
     now(),
     now()
@@ -95,7 +86,7 @@ VALUES
     'Salmos 23',
     'Salmos 23',
     (SELECT id FROM "references" WHERE title = 'Salmos'),
-    (SELECT id FROM rn WHERE label = 'Salmos'),
+    NULL,
     1,
     now(),
     now()
@@ -105,7 +96,7 @@ VALUES
     'Mateus 5',
     'Mateus 5',
     (SELECT id FROM "references" WHERE title = 'Mateus'),
-    (SELECT id FROM rn WHERE label = 'Mateus'),
+    NULL,
     1,
     now(),
     now()

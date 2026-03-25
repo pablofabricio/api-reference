@@ -161,25 +161,13 @@ class InitialDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // root node
-        $rootId = DB::table('reference_nodes')->insertGetId([
-            'type' => 'BOOK',
-            'content' => $refTitle,
-            'label' => $refTitle,
-            'reference_id' => $refId,
-            'parent_node_id' => null,
-            'position' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         // sample section node
         $sectionId = DB::table('reference_nodes')->insertGetId([
             'type' => 'SECTION',
             'content' => $nodeContent,
             'label' => $refTitle . ' sample',
             'reference_id' => $refId,
-            'parent_node_id' => $rootId,
+            'parent_node_id' => null,
             'position' => 1,
             'created_at' => now(),
             'updated_at' => now(),

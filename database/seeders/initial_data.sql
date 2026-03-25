@@ -33,14 +33,10 @@ VALUES
 
 INSERT INTO reference_nodes (type, content, label, reference_id, parent_node_id, position, created_at, updated_at)
 VALUES
-  ('BOOK', 'Romanos', 'Romanos', (SELECT id FROM "references" WHERE title = 'Romanos'), NULL, 1, now(), now()),
-  ('SECTION', 'Paul, a servant of Christ Jesus, called as an apostle, set apart for the gospel of God... (Romanos 1:1-10 sample text)', 'Romanos 1:1-10', (SELECT id FROM "references" WHERE title = 'Romanos'), (SELECT id FROM reference_nodes WHERE label = 'Romanos' AND reference_id = (SELECT id FROM "references" WHERE title = 'Romanos') LIMIT 1), 1, now(), now()),
-  ('BOOK', 'Filipenses', 'Filipenses', (SELECT id FROM "references" WHERE title = 'Filipenses'), NULL, 1, now(), now()),
-  ('SECTION', 'Rejoice in the Lord always. I will say it again: Rejoice! Let your gentleness be evident to all. (Philippians 4:1-10 sample text)', 'Filipenses 4:1-10', (SELECT id FROM "references" WHERE title = 'Filipenses'), (SELECT id FROM reference_nodes WHERE label = 'Filipenses' AND reference_id = (SELECT id FROM "references" WHERE title = 'Filipenses') LIMIT 1), 1, now(), now()),
-  ('BOOK', 'Salmos', 'Salmos', (SELECT id FROM "references" WHERE title = 'Salmos'), NULL, 1, now(), now()),
-  ('SECTION', 'Salmo 23: O Senhor é o meu pastor; nada me faltará...', 'Salmos 23:1', (SELECT id FROM "references" WHERE title = 'Salmos'), (SELECT id FROM reference_nodes WHERE label = 'Salmos' AND reference_id = (SELECT id FROM "references" WHERE title = 'Salmos') LIMIT 1), 1, now(), now()),
-  ('BOOK', 'Mateus', 'Mateus', (SELECT id FROM "references" WHERE title = 'Mateus'), NULL, 1, now(), now()),
-  ('SECTION', 'Mateus 5: Blessed are the poor in spirit... (sample text)', 'Mateus 5:1-12', (SELECT id FROM "references" WHERE title = 'Mateus'), (SELECT id FROM reference_nodes WHERE label = 'Mateus' AND reference_id = (SELECT id FROM "references" WHERE title = 'Mateus') LIMIT 1), 1, now(), now());
+  ('SECTION', 'Paul, a servant of Christ Jesus, called as an apostle, set apart for the gospel of God... (Romanos 1:1-10 sample text)', 'Romanos 1:1-10', (SELECT id FROM "references" WHERE title = 'Romanos'), NULL, 1, now(), now()),
+  ('SECTION', 'Rejoice in the Lord always. I will say it again: Rejoice! Let your gentleness be evident to all. (Philippians 4:1-10 sample text)', 'Filipenses 4:1-10', (SELECT id FROM "references" WHERE title = 'Filipenses'), NULL, 1, now(), now()),
+  ('SECTION', 'Salmo 23: O Senhor é o meu pastor; nada me faltará...', 'Salmos 23:1', (SELECT id FROM "references" WHERE title = 'Salmos'), NULL, 1, now(), now()),
+  ('SECTION', 'Mateus 5: Blessed are the poor in spirit... (sample text)', 'Mateus 5:1-12', (SELECT id FROM "references" WHERE title = 'Mateus'), NULL, 1, now(), now());
 
 -- Notes linked to Romanos and Filipenses reference nodes
 INSERT INTO notes (user_id, content, reference_node_id, visibility, created_at, updated_at)
