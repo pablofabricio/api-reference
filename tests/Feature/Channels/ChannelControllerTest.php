@@ -76,6 +76,53 @@ class ChannelControllerTest extends TestCase
             ->assertJsonStructure(['errors']);
     }
 
+    public function test_destroy_allows_channel_creator_to_delete(): void
+    {
+        $token = $this->authenticateAndGetToken();
+        $userId = (int) User::where('email', 'channels@example.com')->value('id');
+        $channelId = $this->createChannel($userId, 'PUBLIC');
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->deleteJson('/api/channels/' . $channelId);
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('channels', [
+            'id' => $channelId,
+        ]);
+    }
+
+    public function test_destroy_rejects_moderator_deleting_channel(): void
+    {
+        $owner = User::factory()->create([
+            'email' => 'owner-delete@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+        $moderator = User::factory()->create([
+            'email' => 'moderator-delete@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+
+        $channelId = $this->createChannel((int) $owner->id, 'PUBLIC');
+        $this->createChannelMember($channelId, (int) $moderator->id, 'MODERATOR');
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $moderator->email,
+            'password' => '12345678',
+        ])->assertOk();
+
+        $token = (string) $response->json('access_token');
+
+        $deleteResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->deleteJson('/api/channels/' . $channelId);
+
+        $deleteResponse->assertStatus(403);
+
+        $this->assertDatabaseHas('channels', [
+            'id' => $channelId,
+        ]);
+    }
+
     private function authenticateAndGetToken(): string
     {
         $user = User::factory()->create([
@@ -104,6 +151,40 @@ class ChannelControllerTest extends TestCase
             });
         }
 
+        if (!Schema::hasTable('channel_members')) {
+            Schema::create('channel_members', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('channel_id');
+                $table->unsignedBigInteger('user_id');
+                $table->string('role', 20)->default('MEMBER');
+                $table->timestamps();
+                $table->unique(['channel_id', 'user_id']);
+            });
+        }
+
         DB::statement('CREATE INDEX IF NOT EXISTS channels_created_by_idx ON channels (created_by)');
+    }
+
+    private function createChannel(int $createdBy, string $visibility): int
+    {
+        return (int) DB::table('channels')->insertGetId([
+            'name' => 'Canal para exclusao',
+            'created_by' => $createdBy,
+            'visibility' => $visibility,
+            'description' => 'Canal de teste',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    private function createChannelMember(int $channelId, int $userId, string $role): void
+    {
+        DB::table('channel_members')->insert([
+            'channel_id' => $channelId,
+            'user_id' => $userId,
+            'role' => $role,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

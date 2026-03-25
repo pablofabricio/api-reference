@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Repositories\ChannelRepository;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class ChannelService extends BaseService
@@ -23,5 +25,36 @@ class ChannelService extends BaseService
 			});
 
 		return $query->paginate();
+	}
+
+	/**
+	 * Channel access is role-based (creator/owner/moderator), not user_id ownership.
+	 */
+	protected function enforcesUserOwnership(): bool
+	{
+		return false;
+	}
+
+	protected function authorizeModelAccess(Model $model): void
+	{
+		$channelId = (int) $model->getAttribute('id');
+		if ($channelId <= 0 || ! $this->hasChannelManagementAccessByChannelId($channelId)) {
+			throw new AuthorizationException('Unauthorized');
+		}
+	}
+
+	public function delete(int $id): bool
+	{
+		$record = $this->find($id);
+		if (! $record) {
+			return false;
+		}
+
+		$channelId = (int) $record->getAttribute('id');
+		if ($channelId <= 0 || ! $this->hasChannelOwnershipAccessByChannelId($channelId)) {
+			throw new AuthorizationException('Unauthorized');
+		}
+
+		return $this->repository->delete($id);
 	}
 }

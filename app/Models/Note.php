@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\NoteVisibility;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,15 @@ class Note extends BaseModel
         'visibility' => NoteVisibility::class,
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Note $note) {
+            if (Auth::check()) {
+                $note->user_id = (int) Auth::id();
+            }
+        });
+    }
+
     /**
      * Fields allowed to be used as filters in requests.
      *
@@ -33,7 +43,7 @@ class Note extends BaseModel
         $visibilityValues = array_map(fn($e) => $e->value, NoteVisibility::cases());
     
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
             'content' => ['required', 'string'],
             // require a reference node: notes must be attached to a node
             'reference_node_id' => ['required', 'integer', 'exists:reference_nodes,id'],

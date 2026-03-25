@@ -6,6 +6,24 @@ use App\Enums\ReferenceNodeType;
 
 class ReferenceNode extends BaseModel
 {
+    /**
+     * Reference trees need more than the default page size.
+     * Channel detail expects the full node set for a reference.
+     *
+     * @var int
+     */
+    protected $perPage = 300;
+
+    /**
+     * Fields allowed as query filters.
+     *
+     * @var array
+     */
+    protected static array $filters = [
+        'reference_id',
+        'parent_node_id',
+    ];
+
     public static function rules(): array
     {
         return [

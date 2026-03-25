@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
+
 class NoteReferenceAdded extends BaseModel
 {
+    protected $table = 'note_reference_added';
+
     protected $fillable = [
         'note_id',
         'reference_node_id',
@@ -11,6 +15,15 @@ class NoteReferenceAdded extends BaseModel
     ];
 
     public $timestamps = true;
+
+    protected static function booted(): void
+    {
+        static::creating(function (NoteReferenceAdded $noteReferenceAdded) {
+            if (Auth::check()) {
+                $noteReferenceAdded->user_id = (int) Auth::id();
+            }
+        });
+    }
 
     public static function rules(): array
     {
