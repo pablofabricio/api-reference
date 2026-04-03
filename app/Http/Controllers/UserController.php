@@ -31,4 +31,18 @@ class UserController extends BaseController
 
         return new UserResource($user);
     }
+
+    public function avatarUploadUrl(Request $request, int $id)
+    {
+        $payload = $this->userService->generateAvatarUploadUrl($id, Auth::id(), $request->all());
+
+        return response()->json($payload);
+    }
+
+    public function updateAvatar(Request $request, int $id)
+    {
+        $user = $this->userService->updateAvatar($id, Auth::id(), $request->all());
+
+        return new UserResource($user);
+    }
 }

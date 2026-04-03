@@ -29,10 +29,12 @@ class ChannelJoinRequestResource extends JsonResource
                 'id' => $this->requester->id,
                 'name' => $this->requester->name,
                 'email' => $this->requester->email,
+                'avatar_url' => $this->requester->avatar_url,
             ] : null,
             'reviewer' => $this->reviewer ? [
                 'id' => $this->reviewer->id,
                 'name' => $this->reviewer->name,
+                'avatar_url' => $this->reviewer->avatar_url,
             ] : null,
         ];
     }

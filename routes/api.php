@@ -35,6 +35,8 @@ Route::middleware('auth.jwt')->group(function () {
     Route::apiResource('note-reference-added', App\Http\Controllers\NoteReferenceAddedController::class)->only(['index','store','show','update','destroy']);
     Route::get('users/{id}/profile', [App\Http\Controllers\UserController::class, 'profile']);
     Route::put('users/{id}/profile', [App\Http\Controllers\UserController::class, 'updateProfile']);
+    Route::post('users/{id}/avatar/upload-url', [App\Http\Controllers\UserController::class, 'avatarUploadUrl']);
+    Route::put('users/{id}/avatar', [App\Http\Controllers\UserController::class, 'updateAvatar']);
     Route::apiResource('users', App\Http\Controllers\UserController::class)->only(['index','store','show','update','destroy']);
 });
 
