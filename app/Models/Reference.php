@@ -17,6 +17,7 @@ class Reference extends BaseModel
         ];
     }
     protected $fillable = [
+        'user_id',
         'type',
         'title',
         'abbreviation',

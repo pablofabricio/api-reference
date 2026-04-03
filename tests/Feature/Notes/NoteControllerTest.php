@@ -312,5 +312,38 @@ class NoteControllerTest extends TestCase
                 $table->timestamps();
             });
         }
+
+        // Required by NoteService::authorizeModelAccess → hasChannelManagementAccessByReferenceId
+        if (!Schema::hasTable('channel_references')) {
+            Schema::create('channel_references', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('channel_id');
+                $table->unsignedBigInteger('reference_id');
+                $table->timestamps();
+                $table->unique(['channel_id', 'reference_id']);
+            });
+        }
+
+        if (!Schema::hasTable('channel_members')) {
+            Schema::create('channel_members', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('channel_id');
+                $table->unsignedBigInteger('user_id');
+                $table->string('role', 20)->default('MEMBER');
+                $table->timestamps();
+                $table->unique(['channel_id', 'user_id']);
+            });
+        }
+
+        if (!Schema::hasTable('channels')) {
+            Schema::create('channels', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->unsignedBigInteger('created_by')->nullable();
+                $table->string('visibility', 20)->default('PRIVATE');
+                $table->text('description')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 }

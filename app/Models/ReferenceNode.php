@@ -28,14 +28,16 @@ class ReferenceNode extends BaseModel
     {
         return [
             'type' => ['required', 'string'],
-            'content' => ['required', 'string'],
-            'label' => ['nullable', 'string', 'max:255'],
+            'content' => ['required_without:label', 'nullable', 'string'],
+            'label' => ['required_without:content', 'nullable', 'string', 'max:255'],
             'reference_id' => ['required', 'integer', 'exists:references,id'],
             'parent_node_id' => ['nullable', 'integer', 'exists:reference_nodes,id'],
             'position' => ['nullable', 'integer'],
         ];
     }
+
     protected $fillable = [
+        'user_id',
         'type',
         'content',
         'label',

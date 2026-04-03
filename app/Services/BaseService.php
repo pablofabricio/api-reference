@@ -87,6 +87,10 @@ class BaseService
 
         $this->authorizePayload($data);
 
+        if ($this->enforcesUserOwnership()) {
+            $data['user_id'] = Auth::id();
+        }
+
         return $this->repository->create($data);
     }
 

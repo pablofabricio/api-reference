@@ -38,7 +38,17 @@ class ReferenceNodeService extends BaseService
 	protected function authorizeModelAccess(Model $model): void
 	{
 		$referenceId = (int) $model->getAttribute('reference_id');
-		if ($referenceId <= 0 || ! $this->hasChannelManagementAccessByReferenceId($referenceId)) {
+		if ($referenceId <= 0) {
+			throw new AuthorizationException('Unauthorized');
+		}
+
+		// Reference owner always has full access to their own nodes.
+		$reference = \App\Models\Reference::find($referenceId);
+		if ($reference && (int) $reference->getAttribute('user_id') === (int) \Illuminate\Support\Facades\Auth::id()) {
+			return;
+		}
+
+		if (! $this->hasChannelManagementAccessByReferenceId($referenceId)) {
 			throw new AuthorizationException('Unauthorized');
 		}
 	}
