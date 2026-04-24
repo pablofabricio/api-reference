@@ -13,6 +13,14 @@ class ReferenceNodeService extends BaseService
 		parent::__construct($repository);
 	}
 
+	public function getPaginate()
+	{
+		$paginator = parent::getPaginate();
+		$paginator->getCollection()->loadMissing(['reference:id,title']);
+
+		return $paginator;
+	}
+
 	/**
 	 * Reference nodes are managed by channel role, not by node user_id ownership.
 	 */
@@ -30,6 +38,7 @@ class ReferenceNodeService extends BaseService
 
 		if ($model) {
 			$this->authorizeModelAccess($model);
+			$model->loadMissing(['reference:id,title']);
 		}
 
 		return $model;
